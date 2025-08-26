@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Step 1: EC2 ka current public IP fetch karo
+NEW_IP=$(curl -s http://checkip.amazonaws.com)
+
+# Step 2: index.html ka path set karo
+HTML_FILE="./frontend/index.html"
+
+# Step 3: Purana IP ko replace karo with new IP
+sed -i "s#http://[0-9\.]\+:8080/student/#http://$NEW_IP:8080/student/#g" $HTML_FILE
+
+echo "✅ Updated index.html with new IP: $NEW_IP"
+
+# Step 4: Frontend ko rebuild & restart karo
+docker-compose build frontend
+docker-compose up -d frontend
+
+echo "🚀 Frontend redeployed with updated backend IP!"
+
